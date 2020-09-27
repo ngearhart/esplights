@@ -1,5 +1,5 @@
 // Connect to wifi – returns true if successful or false if not
-boolean ConnectWifi(void)
+boolean ConnectWifi(uint16_t ledCount, CRGB* leds, int (*ticker)(byte, uint16_t, CRGB*))
 {
   boolean state = true;
   int i = 0;
@@ -13,7 +13,12 @@ boolean ConnectWifi(void)
   // Wait for connection
   Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500); // TODO fade lights during this part
+    // Fade lights while connecting
+    for (byte tick = 0; tick < 20; tick++) {
+      delay(80);
+      (*ticker)(tick, ledCount, leds);
+      FastLED.show();
+    }
     Serial.print(".");
     if (i > 20){
       state = false;
